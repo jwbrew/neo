@@ -14,6 +14,8 @@ defmodule Neo.Repo do
   end
 
   @spec commit(Neo.Event.t()) :: {:ok, non_neg_integer} | {:error, atom}
+  def commit(%{id: id}) when not is_nil(id), do: {:error, :existing_event}
+
   def commit(event) do
     Amnesia.transaction do
       try do

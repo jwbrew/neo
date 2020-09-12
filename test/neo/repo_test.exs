@@ -30,4 +30,17 @@ defmodule Neo.RepoTest do
     {:ok, id_2} = Neo.Repo.commit(event)
     refute id_1 == id_2
   end
+
+  test "does not add an existing event" do
+    event = %Neo.Event{
+      entity: 42,
+      attribute: User.FirstName,
+      value: "John",
+      op: true
+    }
+
+    {:ok, id} = Neo.Repo.commit(event)
+    {:ok, retrieved} = Neo.Repo.get(id)
+    assert {:error, :existing_event} = Neo.Repo.commit(retrieved)
+  end
 end
