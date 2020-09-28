@@ -11,7 +11,7 @@ defmodule Neo.Event do
   @type t :: %__MODULE__{
           id: non_neg_integer,
           entity: number | binary,
-          attribute: atom,
+          attribute: binary,
           value: any,
           op: boolean
         }
@@ -19,11 +19,11 @@ defmodule Neo.Event do
 
   defmacro __using__(_) do
     quote do
-      def add(value, entity) do
+      def add(entity, value) do
         %Neo.Event{entity: entity, attribute: __MODULE__, value: value}
       end
 
-      def retract(value, entity) do
+      def retract(entity, value) do
         %Neo.Event{entity: entity, attribute: __MODULE__, value: value, op: false}
       end
     end

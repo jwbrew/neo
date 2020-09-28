@@ -44,6 +44,18 @@ defmodule Neo.Repo do
     end
   end
 
+  def all(module) do
+    Amnesia.transaction do
+      events =
+        for {:ok, event} <- Neo.Repo.Database.Event.keys() |> Enum.map(&Neo.Repo.get/1),
+            do: {event.entity, to_string(event.attribute), event.value}
+
+      e = :datalog.c(:datalog_list, module.query())
+      s = :datalog.q(e, events)
+      :stream.list(s)
+    end
+  end
+
   defp from_event(event), do: %{event | __struct__: Database.Event}
   defp to_event(event), do: %{event | __struct__: Neo.Event}
 end

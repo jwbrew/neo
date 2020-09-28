@@ -6,9 +6,7 @@ defmodule Neo.EventTest do
   end
 
   test "generates an add event" do
-    event =
-      "John"
-      |> User.FirstName.add(42)
+    event = User.FirstName.add(42, "John")
 
     assert event == %Neo.Event{
              id: nil,
@@ -20,9 +18,7 @@ defmodule Neo.EventTest do
   end
 
   test "generates a retract event" do
-    event =
-      "John"
-      |> User.FirstName.retract(42)
+    event = User.FirstName.retract(42, "John")
 
     assert event == %Neo.Event{
              id: nil,
