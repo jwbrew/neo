@@ -9,6 +9,27 @@ defmodule Movies.Movie.Director, do: use(Neo.Event)
 defmodule Movies.Movie.Cast, do: use(Neo.Event)
 defmodule Movies.Movie.Sequel, do: use(Neo.Event)
 
+defmodule Movies do
+  use Neo.Fact, source: Neo.Event
+
+  select [:id, :title, :director, :year] do
+    where(Movies.Movie.Year, @id, @year)
+    where(Movies.Movie.Title, @id, @title)
+    where(Movies.Movie.Director, @id, @did)
+    where(Movies.Actor.Name, @did, @director)
+  end
+end
+
+defmodule Actors do
+  use Neo.Fact, source: Neo.Event
+
+  select [:id, :title, :actor] do
+    where(Movies.Movie.Title, @id, @title)
+    where(Movies.Movie.Cast, @id, @aid)
+    where(Movies.Actor.Name, @aid, @actor)
+  end
+end
+
 [
   Movies.Actor.Name.add("urn:person:100", "James Cameron"),
   Movies.Actor.Born.add("urn:person:100", "1954-08-16"),

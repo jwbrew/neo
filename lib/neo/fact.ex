@@ -28,7 +28,7 @@ defmodule Neo.Fact do
 
   defmacro __before_compile__(_env) do
     quote do
-      def query(subs),
+      def query(subs \\ []),
         do:
           @query
           |> Enum.reverse()
