@@ -44,13 +44,13 @@ defmodule Neo.Repo do
     end
   end
 
-  def all(module) do
+  def query(module, subs \\ []) do
     Amnesia.transaction do
       events =
         for {:ok, event} <- Neo.Repo.Database.Event.keys() |> Enum.map(&Neo.Repo.get/1),
             do: {event.entity, to_string(event.attribute), event.value}
 
-      e = :datalog.c(:datalog_list, module.query())
+      e = :datalog.c(:datalog_list, module.query(subs))
       s = :datalog.q(e, events)
       :stream.list(s)
     end

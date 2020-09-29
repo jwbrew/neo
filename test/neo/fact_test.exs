@@ -1,4 +1,4 @@
-defmodule SomeFact do
+defmodule Movies do
   use Neo.Fact, source: Neo.Event
 
   select [:id, :title, :director, :year] do
@@ -9,11 +9,21 @@ defmodule SomeFact do
   end
 end
 
+defmodule Actors do
+  use Neo.Fact, source: Neo.Event
+
+  select [:id, :title, :actor] do
+    where(Movies.Movie.Title, @id, @title)
+    where(Movies.Movie.Cast, @id, @aid)
+    where(Movies.Actor.Name, @aid, @actor)
+  end
+end
+
 defmodule Neo.FactTest do
   use ExUnit.Case
 
   test "succesfully queries a fact" do
-    assert Neo.Repo.query(SomeFact) == [
+    assert Neo.Repo.query(Movies) == [
              ["urn:movie:200", "The Terminator", "James Cameron", 1984],
              ["urn:movie:201", "First Blood", "Ted Kotcheff", 1982],
              ["urn:movie:202", "Predator", "John McTiernan", 1987],
@@ -38,11 +48,31 @@ defmodule Neo.FactTest do
            ]
   end
 
-  test "successfully constrains a fact" do
-    assert Neo.Repo.query(SomeFact) == [
+  test "successfully constrains a fact by year" do
+    assert Neo.Repo.query(Movies, year: 1987) == [
              ["urn:movie:202", "Predator", "John McTiernan"],
              ["urn:movie:203", "Lethal Weapon", "Richard Donner"],
              ["urn:movie:204", "RoboCop", "Paul Verhoeven"]
+           ]
+  end
+
+  test "successfully constrains a fact by movie" do
+    assert Neo.Repo.query(Actors, id: "urn:movie:212") == [
+             ["Lethal Weapon 2", "Mel Gibson"],
+             ["Lethal Weapon 2", "Danny Glover"],
+             ["Lethal Weapon 2", "Joe Pesci"]
+           ]
+  end
+
+  test "successfully constrains a fact by actor" do
+    assert Neo.Repo.query(Actors, actor: "Mel Gibson") == [
+             ["urn:movie:203", "Lethal Weapon"],
+             ["urn:movie:212", "Lethal Weapon 2"],
+             ["urn:movie:213", "Lethal Weapon 3"],
+             ["urn:movie:216", "Mad Max"],
+             ["urn:movie:217", "Mad Max 2"],
+             ["urn:movie:218", "Mad Max Beyond Thunderdome"],
+             ["urn:movie:219", "Braveheart"]
            ]
   end
 end

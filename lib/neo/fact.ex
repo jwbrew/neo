@@ -6,11 +6,30 @@ defmodule Neo.Fact do
     quote do
       import Neo.Fact
 
-      @goal :goal
       @query []
+      @goal :goal
       @source unquote(source)
 
       @before_compile Neo.Fact
+    end
+  end
+
+  defmacro select(vars, do: {:__block__, [], lines}) do
+    quote do
+      @query [Neo.Fact.goal(@goal, unquote(vars)) | @query]
+      @query [Neo.Fact.source(@source) | @query]
+
+      @query [
+        {:horn, @goal, unquote(vars), unquote(Enum.map(lines, &line/1))}
+        | @query
+      ]
+    end
+  end
+
+  defmacro __before_compile__(_env) do
+    quote do
+      def query(subs),
+        do: @query |> Enum.reverse() |> Neo.Fact.substitute(subs) |> IO.inspect(label: "query")
     end
   end
 
@@ -35,21 +54,17 @@ defmodule Neo.Fact do
   def var({:@, _, [{v, _, _}]}), do: v
   def var(x), do: x
 
-  defmacro select(vars, do: {:__block__, [], lines}) do
-    quote do
-      @query [Neo.Fact.goal(@goal, unquote(vars)) | @query]
-      @query [Neo.Fact.source(@source) | @query]
+  def substitute(list, subs) when is_list(list), do: Enum.map(list, &substitute(&1, subs))
+  # Naively assume that this keyword exists and remove it from the set
+  def substitute({:goal, ref, vars}, subs), do: {:goal, ref, Enum.drop(vars, Enum.count(subs))}
+  def substitute({:source, _, _} = source, _subs), do: source
 
-      @query [
-        {:horn, @goal, unquote(vars), unquote(Enum.map(lines, &line/1))}
-        | @query
-      ]
-    end
-  end
+  def substitute({:horn, ref, vars, lines}, subs),
+    do: {:horn, ref, vars -- Keyword.keys(subs), Enum.map(lines, &substitute(&1, subs))}
 
-  defmacro __before_compile__(_env) do
-    quote do
-      def query(), do: @query |> Enum.reverse() |> IO.inspect(label: "query")
-    end
-  end
+  def substitute(%{@: _source, _: vars} = line, subs),
+    do: %{line | _: Enum.map(vars, &substitute(&1, subs))}
+
+  def substitute(atom, subs) when is_atom(atom), do: Keyword.get(subs, atom, atom)
+  def substitute(other, _subs), do: other
 end
