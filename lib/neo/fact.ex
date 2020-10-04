@@ -14,7 +14,13 @@ defmodule Neo.Fact do
     end
   end
 
-  defmacro select(vars, do: {:__block__, [], lines}) do
+  defmacro select(vars, do: block) do
+    lines =
+      case block do
+        {:__block__, [], lines} -> lines
+        other -> [other]
+      end
+
     quote do
       @query [Neo.Fact.Builder.goal(@goal, unquote(vars)) | @query]
       @query [Neo.Fact.Builder.source(@source) | @query]

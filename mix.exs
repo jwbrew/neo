@@ -27,7 +27,8 @@ defmodule Neo.MixProject do
   defp deps do
     [
       {:amnesia, "~> 0.2.7"},
-      {:datalog, "~> 2.0"}
+      {:datalog, "~> 2.0"},
+      {:uuid, "~> 1.1"}
     ]
   end
 end

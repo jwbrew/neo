@@ -54,4 +54,12 @@ defmodule Neo.FactTest do
              ["urn:movie:219", "Braveheart"]
            ]
   end
+
+  test "successfully returns sparse data" do
+    assert Neo.Repo.query(Sequels) == [
+             ["Mad Max", "Mad Max 2"],
+             ["Mad Max 2", "Mad Max Beyond Thunderdome"],
+             ["Mad Max Beyond Thunderdome", nil]
+           ]
+  end
 end

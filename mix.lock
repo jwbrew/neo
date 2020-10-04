@@ -3,4 +3,5 @@
   "datalog": {:hex, :datalog, "2.0.2", "e51d71086aaa8470e79224225905e814c764a46800378e6db00ac2f888651f82", [:rebar3], [{:datum, "~>4.5.0", [hex: :datum, repo: "hexpm", optional: false]}], "hexpm", "2be79ec55265aedf69b98f7b205e23bc5f55bf4cf92d64093f7cf7cafac649af"},
   "datum": {:hex, :datum, "4.5.1", "66c163a7ffb7a773e884eb238402375d2e6609718c5c88aef5809e410d494f08", [:rebar3], [], "hexpm", "20dcf2084b00143b8d9eec45eef4c8d436e77fdc8b23208ca7bb82b3bd6a4da4"},
   "exquisite": {:hex, :exquisite, "0.1.10", "e3ca4f8b812696a40a6da3bcd4e9861cef879ee2eb239d5485b0f96885fc9fba", [:mix], [], "hexpm", "0af9319851f1e21dd4adab812c82247f05e11cc19820fa17cc74afd696e2313c"},
+  "uuid": {:hex, :uuid, "1.1.8", "e22fc04499de0de3ed1116b770c7737779f226ceefa0badb3592e64d5cfb4eb9", [:mix], [], "hexpm", "c790593b4c3b601f5dc2378baae7efaf5b3d73c4c6456ba85759905be792f2ac"},
 }

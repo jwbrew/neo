@@ -20,6 +20,19 @@ defmodule Movies do
   end
 end
 
+defmodule Sequels do
+  use Neo.Fact, source: Neo.Event
+
+  select [:original, :sequel],
+    title: String,
+    sid: {:optional, String},
+    sequel: {:optional, String} do
+    where(Movies.Movie.Title, @id, @original)
+    where(Movies.Movie.Sequel, @id, @sid)
+    where(Movies.Movie.Title, @sid, @sequel)
+  end
+end
+
 defmodule Actors do
   use Neo.Fact, source: Neo.Event
 
